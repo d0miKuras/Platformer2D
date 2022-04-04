@@ -1,0 +1,30 @@
+{
+    "Version": "1.1",
+    "Data": {
+        "Source": "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\development\\statemachine\\module.statemachine.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\ue5projects\\platformer2d\\intermediate\\build\\win64\\platformer2deditor\\development\\engine\\sharedpch.engine.shadowerrors.h.pch",
+        "Includes": [
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\development\\statemachine\\definitions.statemachine.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\private\\statemachine.cpp",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\public\\statemachine.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\private\\statemachinecomponent.cpp",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\public\\statemachinecomponent.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagcontainer.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\core\\public\\misc\\comparisonutility.h",
+            "c:\\ue5\\ue_5.0\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\gameplaytagcontainer.generated.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\gameplaytags\\public\\gameplaytags.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\core\\public\\misc\\monolithicheaderboilerplate.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagsmanager.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\engine\\classes\\engine\\datatable.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\engine\\public\\datatableutils.h",
+            "c:\\ue5\\ue_5.0\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\engine\\datatable.generated.h",
+            "c:\\ue5\\ue_5.0\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\gameplaytagsmanager.generated.h",
+            "c:\\ue5\\ue_5.0\\engine\\source\\runtime\\gameplaytags\\classes\\gameplaytagassetinterface.h",
+            "c:\\ue5\\ue_5.0\\engine\\intermediate\\build\\win64\\unrealeditor\\inc\\gameplaytags\\gameplaytagassetinterface.generated.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\inc\\statemachine\\statemachinecomponent.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

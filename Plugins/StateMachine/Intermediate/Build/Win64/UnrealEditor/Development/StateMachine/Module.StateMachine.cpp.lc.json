@@ -1,0 +1,18 @@
+{
+    "Version": "1.1",
+    "Data": {
+        "Source": "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\development\\statemachine\\module.statemachine.cpp",
+        "ProvidedModule": "",
+        "PCH": "d:\\ue5projects\\platformer2d\\intermediate\\build\\win64\\platformer2deditor\\development\\engine\\sharedpch.engine.shadowerrors.h.pch",
+        "Includes": [
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\development\\statemachine\\definitions.statemachine.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\private\\statemachine.cpp",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\public\\statemachine.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\private\\statemachinecomponent.cpp",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\source\\statemachine\\public\\statemachinecomponent.h",
+            "d:\\ue5projects\\platformer2d\\plugins\\statemachine\\intermediate\\build\\win64\\unrealeditor\\inc\\statemachine\\statemachinecomponent.generated.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

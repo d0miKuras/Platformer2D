@@ -1,0 +1,13 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-StateMachine.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"D:\UE5Projects\Platformer2D\Intermediate\Build\Win64\Platformer2DEditor\Development\Engine\SharedPCH.Engine.ShadowErrors.h.obj"
+"D:\UE5Projects\Platformer2D\Plugins\StateMachine\Intermediate\Build\Win64\UnrealEditor\Development\StateMachine\Module.StateMachine.cpp.obj"
+"D:\UE5Projects\Platformer2D\Plugins\StateMachine\Intermediate\Build\Win64\UnrealEditor\Development\StateMachine\Module.StateMachine.gen.cpp.obj"
+"D:\UE5Projects\Platformer2D\Plugins\StateMachine\Intermediate\Build\Win64\UnrealEditor\Development\StateMachine\Default.rc2.res"
+/OUT:"D:\UE5Projects\Platformer2D\Plugins\StateMachine\Intermediate\Build\Win64\UnrealEditor\Development\StateMachine\UnrealEditor-StateMachine.lib"
