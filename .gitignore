@@ -7,3 +7,5 @@ Platformer2D.sln
 /Script
 /.idea
 /Plugins/Developer
+/Plugins/StateMachine/Binaries
+/Plugins/StateMachine/Intermediate
