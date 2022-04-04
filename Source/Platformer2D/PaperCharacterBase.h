@@ -7,7 +7,6 @@
 #include "PaperCharacterBase.generated.h"
 
 class UPaperFlipbook;
-
 /**
  * 
  */
@@ -56,6 +55,7 @@ protected:
 	class UBoxComponent* BoxCollider;
 
 	bool m_pIsDashInCooldown;
+	FTimerHandle m_pDashCooldownTimerHandle;
 	FTimerHandle m_pDashTimerHandle;
 	bool m_pIsDashActivated;
 	float m_pDashTimeElapsed;
@@ -74,13 +74,19 @@ public:
 	FORCEINLINE FVector GetDashVelocity() const { return (m_pDashTargetLocation - m_pDashStartLocation) / dashDuration;}
 
 protected:
-		void MoveRight(float value);
-		void Dash();
-		void Jump();
-		void WallJump(FHitResult& hit);
-		void Grapple();
-		UFUNCTION()
-		void OnDashCooldownTimerOver();
+	void MoveRight(float value);
+	void Dash();
+
+	void Dash_Implementation();
+	UFUNCTION()
+	void Dash_TimeElapsed();
+	void Jump();
+	void WallJump(FHitResult& hit);
+	void Grapple();
+	UFUNCTION()
+	void OnDashCooldownTimerOver();
+	UFUNCTION()
+	void OnDashOver();
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;

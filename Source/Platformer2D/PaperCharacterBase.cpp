@@ -127,7 +127,7 @@ void APaperCharacterBase::Tick(float deltaTime)
 		else
 		{
 			m_pIsDashActivated = false;
-			GetWorldTimerManager().SetTimer(m_pDashTimerHandle, this, &APaperCharacterBase::OnDashCooldownTimerOver, timerCooldown, false);
+			GetWorldTimerManager().SetTimer(m_pDashCooldownTimerHandle, this, &APaperCharacterBase::OnDashCooldownTimerOver, timerCooldown, false);
 		}
 	}
 	/////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ void APaperCharacterBase::SetupPlayerInputComponent(class UInputComponent* Playe
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APaperCharacterBase::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APaperCharacter::StopJumping);
-	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APaperCharacterBase::Dash);
+	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APaperCharacterBase::Dash_Implementation);
 	PlayerInputComponent->BindAction("Grapple", IE_Pressed, this, &APaperCharacterBase::Grapple);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APaperCharacterBase::MoveRight);
 }
@@ -174,7 +174,7 @@ void APaperCharacterBase::MoveRight(float value)
 {
 	AddMovementInput(FVector(1.0, 0, 0), value);
 }
-
+#pragma region DASH
 void APaperCharacterBase::Dash()
 {
 	if (!m_pIsDashInCooldown && GetVelocity().X != 0.f)
@@ -188,6 +188,54 @@ void APaperCharacterBase::Dash()
 	}
 }
 
+void APaperCharacterBase::Dash_Implementation()
+{
+	if (!m_pIsDashInCooldown && GetVelocity().X != 0.f)
+	{
+		if (m_DashAnimation)
+			GetSprite()->SetFlipbook(m_DashAnimation);
+		m_pDashTimeElapsed = 0.f;
+		// m_pIsDashActivated = true;
+		m_pDashTargetLocation = GetActorLocation() + GetSprite()->GetForwardVector() * dashDistance;
+		m_pDashStartLocation = GetActorLocation();
+	
+		// GetCharacterMovement()->bUseSeparateBrakingFriction = false;
+		// GetCharacterMovement()->BrakingFriction = 0;
+		m_pIsDashInCooldown = true;
+		
+		GetWorldTimerManager().SetTimer(m_pDashTimerHandle, this, &APaperCharacterBase::Dash_TimeElapsed, 0.016, true);
+	}
+	// FApp::GetDeltaTime();
+	
+}
+
+void APaperCharacterBase::Dash_TimeElapsed()
+{
+	float timeElapsed = GetWorldTimerManager().GetTimerElapsed(m_pDashTimerHandle);
+	m_pDashTimeElapsed += timeElapsed;
+	UE_LOG(LogTemp, Warning, TEXT("Dash Timer: %f"), m_pDashTimeElapsed)
+	if(m_pDashTimeElapsed >= dashDuration)
+	{
+		GetWorldTimerManager().ClearTimer(m_pDashTimerHandle);
+		GetWorldTimerManager().SetTimer(m_pDashTimerHandle, this, &APaperCharacterBase::OnDashCooldownTimerOver, timerCooldown, false);
+	}
+	LaunchCharacter(GetDashVelocity(), true, true);
+}
+
+void APaperCharacterBase::OnDashCooldownTimerOver()
+{
+	m_pIsDashInCooldown = false;
+	GetWorldTimerManager().ClearTimer(m_pDashCooldownTimerHandle);
+}
+
+void APaperCharacterBase::OnDashOver()
+{
+	GetCharacterMovement()->bUseSeparateBrakingFriction = true;
+	GetCharacterMovement()->BrakingFriction = 10;
+	GetCharacterMovement()->GroundFriction = 8.0f;
+}
+
+#pragma endregion
 void APaperCharacterBase::Grapple()
 {
 	if (m_pCanGrapple)
@@ -235,11 +283,7 @@ bool APaperCharacterBase::DetectWall(FHitResult& OutHit)
 
 }
 
-void APaperCharacterBase::OnDashCooldownTimerOver()
-{
-	m_pIsDashInCooldown = false;
-	GetWorldTimerManager().ClearTimer(m_pDashTimerHandle);
-}
+
 
 
 
