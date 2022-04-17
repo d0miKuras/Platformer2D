@@ -19,7 +19,8 @@ protected:
 	class USpringArmComponent* m_springArm;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	class UCameraComponent* m_cameraComponent;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State Machine")
+	class UStateMachineComponent* m_StateMachine;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	UPaperFlipbook* m_IdleAnimation;
 

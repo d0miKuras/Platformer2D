@@ -9,9 +9,12 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/BoxComponent.h"
 #include "DrawDebugHelpers.h"
+#include "StateMachineComponent.h"
 
 #define COLLISION_GRAPPABLE		ECC_GameTraceChannel1
 #define DETECTION_GRAPPABLE		ECC_GameTraceChannel2
+
+#define GP_TAG_IDLE				"PlayerState.Idle"
 
 const FName GrappleSocket = "Grapple Location";
 
@@ -30,6 +33,11 @@ APaperCharacterBase::APaperCharacterBase()
 	m_springArm->TargetArmLength = 1200.f;
 	m_springArm->SetupAttachment(GetSprite());
 
+	// STATE MACHINE /////////////////////
+	m_StateMachine = CreateDefaultSubobject<UStateMachineComponent>(TEXT("State Machine Component"));
+	////////////////////////////////
+
+	
 	m_cameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	m_cameraComponent->SetupAttachment(m_springArm);
 
@@ -68,7 +76,7 @@ APaperCharacterBase::APaperCharacterBase()
 void APaperCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	BoxCollider->OnComponentBeginOverlap.AddDynamic(this, &APaperCharacterBase::OnGrappleDetectionOverlapBegin);
 	BoxCollider->OnComponentEndOverlap.AddDynamic(this, &APaperCharacterBase::OnGrappleDetectionOverlapEnd);
 }
@@ -144,7 +152,7 @@ void APaperCharacterBase::SetupPlayerInputComponent(class UInputComponent* Playe
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APaperCharacterBase::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APaperCharacter::StopJumping);
-	PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APaperCharacterBase::Dash_Implementation);
+	// PlayerInputComponent->BindAction("Dash", IE_Pressed, this, &APaperCharacterBase::Dash_Implementation);
 	PlayerInputComponent->BindAction("Grapple", IE_Pressed, this, &APaperCharacterBase::Grapple);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APaperCharacterBase::MoveRight);
 }
