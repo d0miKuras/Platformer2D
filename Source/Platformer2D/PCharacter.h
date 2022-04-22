@@ -20,12 +20,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Primitives)
 	class UStaticMeshComponent* StaticMesh;
 
-	UPROPERTY(EditAnywhere, Category=Jump)
+	UPROPERTY(EditAnywhere, Category="Jump")
 	float CoyoteTime;
-	UPROPERTY(EditDefaultsOnly, Category=Jump)
+	UPROPERTY(EditDefaultsOnly, Category="Jump")
 	bool bCanDoubleJump;
-	
+	UPROPERTY(EditDefaultsOnly, Category="Jump")
+	float JumpBufferDuration;
+
+	FTimerHandle JumpBufferTimerHandle;
 	FTimerHandle CoyoteJumpTimerHandle;
+
+	bool bJumpBuffered;
 public:
 	// Sets default values for this character's properties
 	APCharacter();
@@ -42,6 +47,9 @@ protected:
 
 	UFUNCTION()
 	void CoyoteTimerElapsed();
+
+	UFUNCTION()
+	void JumpBufferTimerElapsed();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

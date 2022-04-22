@@ -33,7 +33,9 @@ APCharacter::APCharacter()
 	SetupMovementComponent();
 	bCanDoubleJump = true;
 	bHasDoubleJumped = false;
+	bJumpBuffered = false;
 	CoyoteTime = 0.25f;
+	JumpBufferDuration = 0.1f;
 }
 // Called when the game starts or when spawned
 void APCharacter::BeginPlay()
@@ -89,6 +91,12 @@ void APCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 Pr
 		GetWorldTimerManager().ClearTimer(CoyoteJumpTimerHandle);
 		UE_LOG(LogTemp, Warning, TEXT("Landed, clearing coyote timer"));
 		bHasDoubleJumped = false;
+
+		if(bJumpBuffered)
+		{
+			Jump();
+			bJumpBuffered = false;
+		}
 	}
 }
 
@@ -101,6 +109,11 @@ void APCharacter::Jump()
 		const double ZVelocity = GetCharacterMovement()->JumpZVelocity;
 		LaunchCharacter(FVector(0, 0, ZVelocity), false, true);
 		bHasDoubleJumped = true;
+	}
+	else if(GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling)
+	{
+		bJumpBuffered = true;
+		GetWorldTimerManager().SetTimer(JumpBufferTimerHandle, this, &APCharacter::JumpBufferTimerElapsed, JumpBufferDuration);
 	}
 }
 
@@ -139,6 +152,11 @@ bool APCharacter::CanJumpInternal_Implementation() const
 void APCharacter::CoyoteTimerElapsed()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Coyote Timer Elapsed"));
+}
+
+void APCharacter::JumpBufferTimerElapsed()
+{
+	bJumpBuffered = false;
 }
 
 
