@@ -26,10 +26,22 @@ protected:
 	bool bCanDoubleJump;
 	UPROPERTY(EditDefaultsOnly, Category="Jump")
 	float JumpBufferDuration;
+	UPROPERTY(EditDefaultsOnly, Category="Jump")
+	float MaxFallSpeed;
+
+
+	UPROPERTY(EditDefaultsOnly, Category="Wall Jump")
+	float DetectionRange;
+	UPROPERTY(EditDefaultsOnly, Category="Wall Jump")
+	float WallJumpForce;
+	UPROPERTY(EditDefaultsOnly, Category="Wall Jump")
+	float WallJumpCooldown;
 
 	FTimerHandle JumpBufferTimerHandle;
 	FTimerHandle CoyoteJumpTimerHandle;
+	FTimerHandle WallJumpCooldownTimerHandle;
 
+	bool bWallJumpInCooldown;
 	bool bJumpBuffered;
 public:
 	// Sets default values for this character's properties
@@ -41,7 +53,7 @@ protected:
 	virtual void BeginPlay() override;
 	void Jump();
 
-	
+	void WallJump(bool RightWall);
 	void MoveRight(float X);
 	virtual bool CanJumpInternal_Implementation() const override;
 
@@ -50,14 +62,24 @@ protected:
 
 	UFUNCTION()
 	void JumpBufferTimerElapsed();
+
+	UFUNCTION()
+	void WallJumpCooldownTimerElapsed();
+
+	UFUNCTION()
+	bool DetectWall(bool& OutRightHit) const;
+
+	
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
+	UFUNCTION()
+	void Test();
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 private:
 	void SetupMovementComponent();
 	bool bHasDoubleJumped;
+	
 };

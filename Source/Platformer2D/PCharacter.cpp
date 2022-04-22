@@ -34,13 +34,19 @@ APCharacter::APCharacter()
 	bCanDoubleJump = true;
 	bHasDoubleJumped = false;
 	bJumpBuffered = false;
+	bWallJumpInCooldown = false;
 	CoyoteTime = 0.25f;
 	JumpBufferDuration = 0.1f;
+	DetectionRange = 10.0f;
+	WallJumpForce = 800.0f;
+	WallJumpCooldown = 0.7f;
+	MaxFallSpeed = -1000.0f;
 }
 // Called when the game starts or when spawned
 void APCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 // Called every frame
@@ -48,7 +54,12 @@ void APCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	UE_LOG(LogTemp, Warning, TEXT("JumpCurrentCount = %d"), JumpCurrentCount);
+	if(GetMovementComponent()->Velocity.Z < MaxFallSpeed)
+	{
+		GetMovementComponent()->Velocity.Z = MaxFallSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Velocity: %d, %d"), GetVelocity().X, GetVelocity().Z);
+	}
+	
 }
 
 // Called to bind functionality to input
@@ -59,6 +70,7 @@ void APCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APCharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &APaperCharacter::StopJumping);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APCharacter::MoveRight);
+	PlayerInputComponent->BindAction("Test", IE_Pressed, this, &APCharacter::Test);
 }
 
 void APCharacter::SetupMovementComponent()
@@ -75,7 +87,6 @@ void APCharacter::SetupMovementComponent()
 	GetCharacterMovement()->bConstrainToPlane = true;
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::Y);
 }
-
 
 void APCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
@@ -102,12 +113,18 @@ void APCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 Pr
 
 void APCharacter::Jump()
 {
+	bool RightWall = false;
+	if(DetectWall(RightWall) && GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling && !bWallJumpInCooldown)
+	{
+		WallJump(RightWall);
+		return;
+	}
 	if(CanJumpInternal_Implementation())
 		Super::Jump();
 	else if(bCanDoubleJump && !bHasDoubleJumped)
 	{
 		const double ZVelocity = GetCharacterMovement()->JumpZVelocity;
-		LaunchCharacter(FVector(0, 0, ZVelocity), false, true);
+		LaunchCharacter(FVector(0, 0, ZVelocity), true, true);
 		bHasDoubleJumped = true;
 	}
 	else if(GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Falling)
@@ -115,6 +132,21 @@ void APCharacter::Jump()
 		bJumpBuffered = true;
 		GetWorldTimerManager().SetTimer(JumpBufferTimerHandle, this, &APCharacter::JumpBufferTimerElapsed, JumpBufferDuration);
 	}
+}
+
+void APCharacter::WallJump(bool RightWall)
+{
+	FRotator Rot = GetActorRotation();
+	FVector Direction = Rot.Add(RightWall ? 135 : 45, 0, 0).Vector();
+	FVector Velocity = Direction * WallJumpForce;
+
+	FVector TraceEnd = GetActorLocation() + Velocity;
+	DrawDebugLine(GetWorld(), GetActorLocation(), TraceEnd, FColor::Green, false,2.0f, 0, 10.f);
+
+	LaunchCharacter(Velocity, true, true);
+	bWallJumpInCooldown = true;
+	GetWorldTimerManager().SetTimer(WallJumpCooldownTimerHandle, this, &APCharacter::WallJumpCooldownTimerElapsed, WallJumpCooldown);
+	
 }
 
 void APCharacter::MoveRight(float X)
@@ -159,5 +191,46 @@ void APCharacter::JumpBufferTimerElapsed()
 	bJumpBuffered = false;
 }
 
+void APCharacter::WallJumpCooldownTimerElapsed()
+{
+	bWallJumpInCooldown = false;
+}
 
+bool APCharacter::DetectWall(bool& OutRightHit) const
+{
+	FHitResult HitRight;
+	FHitResult HitLeft;
+	
+	float Radius = GetCapsuleComponent()->GetScaledCapsuleRadius() / 2;
+	FCollisionShape shape;
+	shape.SetSphere(Radius);
+	
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+	FVector TraceStart = GetActorLocation();
+	
+	FVector TraceEndRight = GetActorLocation();
+	FVector TraceEndLeft = TraceEndRight;
+	// Setting Trace end to Actor Loc + Capsule Radius + range
+	{
+		TraceEndRight.X += GetCapsuleComponent()->GetScaledCapsuleRadius() + DetectionRange;
+		TraceEndLeft.X -= GetCapsuleComponent()->GetScaledCapsuleRadius() + DetectionRange;
+	}
+	
+	bool blockingHitRight = GetWorld()->SweepSingleByChannel(HitRight, TraceStart, TraceEndRight, FQuat::Identity, ECC_WorldStatic, shape, Params);
+	bool blockingHitLeft = GetWorld()->SweepSingleByChannel(HitLeft, TraceStart, TraceEndLeft, FQuat::Identity, ECC_WorldStatic, shape, Params);
+	DrawDebugLine(GetWorld(), TraceStart, TraceEndLeft, FColor::Red, false, 2.0f, 0, 5);
+	DrawDebugLine(GetWorld(), TraceStart, TraceEndRight, FColor::Green, false, 2.0f, 0, 5);
+
+	OutRightHit = blockingHitRight;
+	return blockingHitLeft || blockingHitRight;
+}
+
+void APCharacter::Test()
+{
+	// bool right;
+	// UE_LOG(LogTemp, Warning, TEXT("DetectWall: %s"), DetectWall(right) ? TEXT("true") : TEXT("false"));
+
+	WallJump(true);
+}
 
